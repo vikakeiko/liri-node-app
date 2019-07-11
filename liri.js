@@ -2,23 +2,24 @@ const axios = require('axios');
 const moment = require('moment');
 require("dotenv").config();
 const keys = require("./keys.js");
-// const spotify = new Spotify(keys.spotify);
+const Spotify = require('node-spotify-api');
+const spotify = new Spotify(keys.spotify);
 
 const command = process.argv[2];
 const searchTerm = process.argv[3];
 
 switch (command) {
     case "concert-this":
-        console.log('You searched ' + searchTerm);
         getConcerts(searchTerm);
         break;
     case "movie-this":
-        console.log('You searched ' + searchTerm);
         getMovies(searchTerm);
         break;
     case "spotify-this-song":
-        console.log('You searched ' + searchTerm);
-        // getSpotify(searchTerm)
+        getSpotify(searchTerm);
+        break;
+    case "do-what-it-says":
+        // getSpotify(searchTerm);
         break;
     default:
         console.log('something went wrong?');
@@ -30,7 +31,8 @@ function getConcerts(search) {
         .get(queryUrl)
         .then(function(response) {
             const arrayResults = response.data;
-            console.log(arrayResults);
+            // console.log(arrayResults);
+            if(arrayResults.length === 0){console.log("Sorry, there is no events for this artist.")}
             // loop through results
             arrayResults.forEach(function (result) {
                 // get name of venue date of event and location
@@ -51,7 +53,6 @@ function getConcerts(search) {
 
 function getMovies(movieName) {
     movieName = movieName || "Mr. Nobody";
-
         const queryUrl = `http://www.omdbapi.com/?apikey=trilogy&t=${movieName}`;
         axios
         .get(queryUrl)
@@ -60,5 +61,21 @@ function getMovies(movieName) {
             // pulling those data from response.data
             const {Year, Title, imdbRating, Language, Country, Plot, Actors, Ratings } = response.data;
             console.log(Year, Title, imdbRating, Language, Country, Plot, Actors, Ratings);
+        }).catch(function(err){
+            if(err) console.log(err);
         })
+}
+
+function getSpotify(song){
+    song = song || "The Sign";
+   spotify.search({type:"track", query: song}).then(function(response){
+       let item = response.tracks.items[0];
+       let songName = item.name;
+       let artist = item.artists[0].name;
+       let url = item.artists[0].external_urls.spotify
+       console.log(`
+       ${songName}
+        ${artist}
+        ${url}`);
+   })
 }
