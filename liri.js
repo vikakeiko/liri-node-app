@@ -20,21 +20,22 @@ switch (command) {
         getSpotify(searchTerm);
         break;
     case "do-what-it-says":
-            var fs = require('fs');
-            var data
-try {  
-    data = fs.readFileSync('random.txt', 'utf8');
-    
-} catch(e) {
-    console.log('Error:', e.stack);
-}
-            
+        var fs = require('fs');
+        var data
+        try {
+            data = fs.readFileSync('random.txt', 'utf8');
+
+        } catch (e) {
+            console.log('Error:', e.stack);
+        }
+
 
         getSpotify(data.toString().split(',')[1]);
         break;
     default:
         console.log('something went wrong?');
 }
+
 
 function getConcerts(search) {
     const queryUrl = "https://rest.bandsintown.com/artists/" + search + "/events?app_id=codingbootcamp";
@@ -83,11 +84,11 @@ function getMovies(movieName) {
        Actor: ${Actors}
        Ratings: ${Ratings[0].Source}
        `);
-        
-        }).catch (function(err) {
-    if (err) console.log(err);
-})
-        
+
+        }).catch(function (err) {
+            if (err) console.log(err);
+        })
+
 }
 
 function getSpotify(song) {
